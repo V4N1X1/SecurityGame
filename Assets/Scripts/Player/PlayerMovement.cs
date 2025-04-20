@@ -54,17 +54,17 @@ public class PlayerMovement : MonoBehaviour
                 Jump();
             }
 
-            if (Input.GetKeyDown(KeyCode.LeftShift))
+            if (Input.GetKeyDown(KeyCode.LeftControl))
             {
                 Crouch();
             }
 
-            if (Input.GetKeyUp(KeyCode.LeftShift))
+            if (Input.GetKeyUp(KeyCode.LeftControl))
             {
                 StandUp();
             }
 
-            if (Input.GetKey(KeyCode.F) && stamina > 0f)
+            if (Input.GetKey(KeyCode.LeftShift) && stamina > 0f)
             {
                 Run();
             }
@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
                     StoreStamina();
             }
 
-            if (Input.GetKeyUp(KeyCode.F))
+            if (Input.GetKeyUp(KeyCode.LeftShift))
             {
                 moveSpeed = 5f;
             }
