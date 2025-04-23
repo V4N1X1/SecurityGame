@@ -120,6 +120,9 @@ GameObject:
   - component: {fileID: 3954929474995854333}
   - component: {fileID: 6871606499788166219}
   - component: {fileID: 7726250254944132930}
+  - component: {fileID: 4517700695228624860}
+  - component: {fileID: 8552124849804661143}
+  - component: {fileID: 6120725511783080825}
   m_Layer: 0
   m_Name: NPC 1
   m_TagString: Untagged
@@ -238,6 +241,48 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &4517700695228624860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3301917451527580735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e44bd81a0f41471408e2493fa9ac83d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exitPoint: {fileID: 0}
+  roamRadius: 15
+  roamLimit: 10
+  scanner: {fileID: 0}
+--- !u!114 &8552124849804661143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3301917451527580735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5c0d8830b53654e85c086c05e9c65e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slowSpeed: 1.5
+--- !u!114 &6120725511783080825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3301917451527580735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e58c1216748ba048b7bd502de3ccc10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasIllegalItem: 0
 --- !u!1 &6494098276022418749
 GameObject:
   m_ObjectHideFlags: 0
