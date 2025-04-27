@@ -2,37 +2,50 @@ using UnityEngine;
 
 public class XRayScanner : MonoBehaviour
 {
-    public Transform scanPoint;         // Tarama merkezi
-    public float scanRadius = 2f;       // Tarama yarýçapý
-    public LayerMask npcLayer;          // Sadece NPC katmanýndaki objeleri tarar
-
-    public GameObject greenLight;       // Temizse
-    public GameObject redLight;         // Illegal item varsa
+    public Transform scannerPoint;
+    public float scanRadius = 5f; // Yarýçapý büyüttük
+    public LayerMask npcLayer;
+    public Light scannerLight; // Iþýk objesi
+    public Color cleanColor = Color.green;
+    public Color illegalColor = Color.red;
 
     void Update()
     {
-        Collider[] npcs = Physics.OverlapSphere(scanPoint.position, scanRadius, npcLayer);
         bool foundIllegal = false;
+        Collider[] npcs = Physics.OverlapSphere(scannerPoint.position, scanRadius, npcLayer);
+
+        if (npcs.Length == 0)
+        {
+            scannerLight.color = cleanColor;
+            return;
+        }
 
         foreach (Collider npc in npcs)
         {
+            if (npc == null) continue;
+
             NPCData data = npc.GetComponent<NPCData>();
-            if (data != null && data.hasIllegalItem)
+            if (data != null)
             {
-                foundIllegal = true;
-                break;
+                Debug.Log($"{npc.name} - Illegal: {data.hasIllegalItem}", npc.gameObject); // Objeyi Console'da týklanabilir yapar
+                if (data.hasIllegalItem)
+                {
+                    foundIllegal = true;
+                    break;
+                }
+            }
+            else
+            {
+                Debug.LogError($"{npc.name} üzerinde NPCData yok!", npc.gameObject);
             }
         }
 
-        // Iþýklarý güncelle
-        greenLight.SetActive(!foundIllegal);
-        redLight.SetActive(foundIllegal);
+        scannerLight.color = foundIllegal ? illegalColor : cleanColor;
     }
 
-    // Tarama alanýný sahnede çizmek için
     void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(scanPoint.position, scanRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(scannerPoint.position, scanRadius);
     }
 }

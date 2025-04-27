@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6842270410354351707}
   - component: {fileID: 5756336366755848326}
   - component: {fileID: 2859506990593025117}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Capsule (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 4517700695228624860}
   - component: {fileID: 8552124849804661143}
   - component: {fileID: 6120725511783080825}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: NPC 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -254,9 +254,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   exitPoint: {fileID: 0}
+  scanner: {fileID: 0}
   roamRadius: 15
   roamLimit: 10
-  scanner: {fileID: 0}
+  hasIllegalItem: 0
 --- !u!114 &8552124849804661143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -295,7 +296,7 @@ GameObject:
   - component: {fileID: 5917656816663495150}
   - component: {fileID: 4861726737005062010}
   - component: {fileID: 6730857433040015262}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -402,7 +403,7 @@ GameObject:
   - component: {fileID: 6257308761445226937}
   - component: {fileID: 1786267339030871038}
   - component: {fileID: 3281911314764437738}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Capsule (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
