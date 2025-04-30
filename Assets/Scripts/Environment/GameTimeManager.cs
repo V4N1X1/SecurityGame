@@ -44,6 +44,7 @@ public class GameTimeManager : MonoBehaviour
     // Zamaný durdurma fonksiyonu
     public void PauseTime()
     {
+        
         isPaused = true;
         Debug.Log("Zaman durdu!");
         NPCManager.instance.SendAllNPCsToExit(); // Call to send NPCs to exit

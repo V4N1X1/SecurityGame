@@ -22,6 +22,7 @@ public class NPCBehavior : MonoBehaviour
     public float minDistanceFromSpawn = 10f; // Spawn noktasından en az bu kadar uzakta dolaşsın
     private Vector3 spawnPosition; // NPC'nin ilk aktif olduğu pozisyon
 
+    
     private DialogueManager dialogueManager;
     private NPCData npcData;
     private NavMeshAgent agent;
@@ -31,6 +32,7 @@ public class NPCBehavior : MonoBehaviour
 
     private void Start()
     {
+        
         dialogueManager = FindObjectOfType<DialogueManager>();  // DialogueManager referansını al
         agent = GetComponent<NavMeshAgent>();
         npcData = GetComponent<NPCData>();
@@ -79,6 +81,7 @@ public class NPCBehavior : MonoBehaviour
 
     public void ForceExit()
     {
+        
         if (isDone) return;
         Debug.Log($"{gameObject.name} çıkışa gidiyor.");
         if (activeRoutine != null) StopCoroutine(activeRoutine);
@@ -88,35 +91,39 @@ public class NPCBehavior : MonoBehaviour
 
     private IEnumerator RoamAndExit()
     {
-        // Tarayıcıya git
-        if (scanner != null)
+        if (!npcData.rohan && npcData.Gırgız == false) 
         {
-            yield return MoveToDestination(scanner.position);
-            yield return new WaitForSeconds(0.5f); // Tarayıcıda bekleme süresi
+            if (scanner != null)
+            {
+                yield return MoveToDestination(scanner.position);
+                yield return new WaitForSeconds(0.5f); // Tarayıcıda bekleme süresi
+                npcData.rohan = true;
+
+            }
+
+            if (npcData != null && npcData.hasIllegalItem && waitingAreas.Count > 0)
+            {
+                Transform assignedWaitingArea = GetAvailableWaitingArea();
+                if (assignedWaitingArea != null)
+                {
+                    occupiedWaitingAreas.Add(assignedWaitingArea);
+                    yield return MoveToDestination(assignedWaitingArea.position);
+                    Debug.Log($"{gameObject.name} illegal item nedeniyle bekleme alanına yönlendirildi: {assignedWaitingArea.name}");
+
+                    // Burada BEKLEMEYE geç
+                    currentState = NPCState.Idle;  // Buraya önemli: Beklemedeyken Idle moda geçiriyoruz
+                    yield break; // Burada RoamAndExit coroutine'i durdur
+                }
+                else
+                {
+                    Debug.LogWarning($"{gameObject.name}: Boş bekleme alanı bulunamadı, çıkışa yönlendiriliyor.");
+                    yield return MoveToDestination(GetExitPointWithOffset());
+                    yield break;
+                }
+            }
         }
 
-        if (npcData != null && npcData.hasIllegalItem && waitingAreas.Count > 0)
-        {
-            Transform assignedWaitingArea = GetAvailableWaitingArea();
-            if (assignedWaitingArea != null)
-            {
-                occupiedWaitingAreas.Add(assignedWaitingArea);
-                yield return MoveToDestination(assignedWaitingArea.position);
-                Debug.Log($"{gameObject.name} illegal item nedeniyle bekleme alanına yönlendirildi: {assignedWaitingArea.name}");
-
-                // Burada BEKLEMEYE geç
-                currentState = NPCState.Idle;  // Buraya önemli: Beklemedeyken Idle moda geçiriyoruz
-                yield break; // Burada RoamAndExit coroutine'i durdur
-            }
-            else
-            {
-                Debug.LogWarning($"{gameObject.name}: Boş bekleme alanı bulunamadı, çıkışa yönlendiriliyor.");
-                yield return MoveToDestination(GetExitPointWithOffset());
-                yield break;
-            }
-        }
-
-
+        
 
         // Rastgele dolaşma işlemi
         for (int i = 0; i < roamLimit; i++)
@@ -126,8 +133,7 @@ public class NPCBehavior : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(4f, 10f));
         }
 
-
-
+        
         // Çıkış noktasına git
         yield return MoveToDestination(GetExitPointWithOffset());
         DeactivateNPC();
@@ -188,6 +194,8 @@ public class NPCBehavior : MonoBehaviour
         return exitPoint.position + offset;
     }
 
+    
+
     private Vector3 GetRandomNavMeshPosition(Vector3 origin, float radius)
     {
         Vector3 randomPosition = Vector3.zero;
@@ -219,6 +227,10 @@ public class NPCBehavior : MonoBehaviour
         Debug.LogWarning($"{name}: Rastgele pozisyon bulunamadı! Çıkışa yönlendiriliyor.");
         return GetExitPointWithOffset();
     }
+
+
+
+
 
     private void DeactivateNPC()
     {
@@ -262,5 +274,69 @@ public class NPCBehavior : MonoBehaviour
         }
         return null; // Hiç boş yer kalmadıysa
     }
+    public void GoIdle()
+    {
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
+        if (npcAnimator != null)
+        {
+            npcAnimator.SetBool("Run", false);
+        }
+
+        currentState = NPCState.Idle;
+        Debug.Log($"{gameObject.name} artık idle modda.");
+    }
+
+    public void ScannerInteraction(Transform playerTransform)
+    {
+        StartCoroutine(ScannerResponseRoutine(playerTransform));
+    }
+
+    private IEnumerator ScannerResponseRoutine(Transform playerTransform)
+    {
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
+        // Sana direkt dönsün
+        Vector3 direction = (playerTransform.position - transform.position).normalized;
+        direction.y = 0;
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = lookRotation;
+        }
+
+        if (npcAnimator != null)
+        {
+            npcAnimator.SetBool("Run", false);
+        }
+
+        Debug.Log($"{gameObject.name} sana döndü ve beklemeye geçti.");
+
+        // 🔥 2 saniye bekle
+        yield return new WaitForSeconds(0.5f);
+
+        // Eğer illegal item varsa kaçmaya başlasın
+        if (npcData != null && npcData.hasIllegalItem)
+        {
+            Debug.Log($"{gameObject.name} illegal item taşıyor! Panik kaçışı başlıyor.");
+            ForceExit();
+        }
+        else
+        {
+            Debug.Log($"{gameObject.name} temiz çıktı, tekrar idle moda geçiyor.");
+            GoIdle(); // Veya başka bir davranış
+        }
+    }
+
 
 }
+
+

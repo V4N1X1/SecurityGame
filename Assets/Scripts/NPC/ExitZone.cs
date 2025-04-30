@@ -2,13 +2,20 @@ using UnityEngine;
 
 public class ExitZone : MonoBehaviour
 {
+    GameTimeManager gameTimeManager;
+
+    private void Start()
+    {
+        gameTimeManager = FindObjectOfType<GameTimeManager>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        // Eðer çarpýþan nesne bir NPC ise ve "NPCBehavior" bileþeni varsa
         NPCBehavior npc = other.GetComponent<NPCBehavior>();
-        if (npc != null)
+
+        if (npc != null && (npc.isDone || gameTimeManager != null && gameTimeManager.currentHour == 0f))
         {
-            npc.DeactivateViaTrigger(); // NPC kendi kendini sistem dýþý býrakýr
+            npc.DeactivateViaTrigger();
         }
     }
 }
